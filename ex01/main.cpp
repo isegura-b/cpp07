@@ -31,6 +31,8 @@ int main()
     iter(inter, ni, plus);
     iter(inter, ni, print<int>);
 
+    std::cout << "--------------"<< std::endl;
+
     std::string str[] = {"hola", "mundo"};
     const std::size_t ns = sizeof(str) / sizeof(str[0]);    //std::string * 2 = 16 bytes / sizeof(std::string) == 8 bytes ====> 2 elements
     iter(str, ns, upper);

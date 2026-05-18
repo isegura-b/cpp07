@@ -1,109 +1,62 @@
 #include <iostream>
-#include <cstdlib>
-#include <ctime>
+#include <string>
+
 #include "Array.hpp"
 
-
-#include <iostream>
-#include "Array.hpp"
+template <typename T>
+void printArray(const Array<T> &array, const std::string &label)
+{
+    std::cout << label << " [size=" << array.size() << "]: ";
+    for (std::size_t i = 0; i < array.size(); ++i)
+        std::cout << array[i] << (i + 1 == array.size() ? "" : " ");
+    std::cout << std::endl;
+}
 
 int main()
 {
     std::cout << "=== Empty constructor ===" << std::endl;
-    Array<int> a;
-    std::cout << "size: " << a.size() << std::endl;
+    Array<int> empty;
+    std::cout << "empty.size() = " << empty.size() << std::endl;
 
     std::cout << "\n=== Size constructor ===" << std::endl;
-    Array<int> b(5);
-    for (unsigned int i = 0; i < b.size(); ++i)
-        b[i] = i * 10;
+    Array<int> numbers(5);
+    for (std::size_t i = 0; i < numbers.size(); ++i)
+        numbers[i] = static_cast<int>((i + 1) * 10);
+    printArray(numbers, "numbers");
 
-    for (unsigned int i = 0; i < b.size(); ++i)
-        std::cout << b[i] << " ";
-    std::cout << std::endl;
+    std::cout << "\n=== Copy constructor / deep copy ===" << std::endl;
+    Array<int> copy(numbers);
+    copy[0] = 999;
+    printArray(numbers, "original");
+    printArray(copy, "copy");
 
-    std::cout << "\n=== Copy constructor ===" << std::endl;
-    Array<int> c(b);
-    for (unsigned int i = 0; i < c.size(); ++i)
-        std::cout << c[i] << " ";
-    std::cout << std::endl;
+    std::cout << "\n=== Assignment operator / deep copy ===" << std::endl;
+    Array<int> assigned;
+    assigned = numbers;
+    assigned[1] = 777;
+    printArray(numbers, "original");
+    printArray(assigned, "assigned");
 
-    std::cout << "\n=== Modify copy (deep copy test) ===" << std::endl;
-    c[0] = 999;
+    std::cout << "\n=== Const access ===" << std::endl;
+    const Array<int> constNumbers(numbers);
+    std::cout << "constNumbers[2] = " << constNumbers[2] << std::endl;
 
-    std::cout << "b[0]: " << b[0] << " (should still be 0)" << std::endl;
-    std::cout << "c[0]: " << c[0] << " (should be 999)" << std::endl;
+    std::cout << "\n=== Different type ===" << std::endl;
+    Array<std::string> words(3);
+    words[0] = "hello";
+    words[1] = "from";
+    words[2] = "Array<T>";
+    printArray(words, "words");
 
-    std::cout << "\n=== Assignment operator ===" << std::endl;
-    Array<int> d;
-    d = b;
-    d[1] = 777;
-
-    std::cout << "b[1]: " << b[1] << " (should not change)" << std::endl;
-    std::cout << "d[1]: " << d[1] << " (should be 777)" << std::endl;
-
-    std::cout << "\n=== Out-of-bounds index exception ===" << std::endl;
+    std::cout << "\n=== Out of bounds exception ===" << std::endl;
     try
     {
-        std::cout << b[100] << std::endl;
+        std::cout << numbers[numbers.size()] << std::endl;
     }
     catch (const std::exception &e)
     {
-        std::cout << "Caught exception: " << e.what() << std::endl;
+        std::cout << "caught: " << e.what() << std::endl;
     }
 
     return 0;
 }
-
-
-/*
-#define MAX_VAL 750
-int main(int, char **)
-{
-    Array<int> numbers(MAX_VAL);
-    int *mirror = new int[MAX_VAL];
-    srand(time(NULL));
-    for (int i = 0; i < MAX_VAL; i++)
-    {
-        const int value = rand();
-        numbers[i] = value;
-        mirror[i] = value;
-    }
-    // SCOPE
-    {
-        Array<int> tmp = numbers;
-        Array<int> test(tmp);
-    }
-
-    for (int i = 0; i < MAX_VAL; i++)
-    {
-        if (mirror[i] != numbers[i])
-        {
-            std::cerr << "didn't save the same value!!" << std::endl;
-            return 1;
-        }
-    }
-    try
-    {
-        numbers[-2] = 0;
-    }
-    catch (const std::exception &e)
-    {
-        std::cerr << e.what() << '\n';
-    }
-    try
-    {
-        numbers[MAX_VAL] = 0;
-    }
-    catch (const std::exception &e)
-    {
-        std::cerr << e.what() << '\n';
-    }
-
-    for (int i = 0; i < MAX_VAL; i++)
-    {
-        numbers[i] = rand();
-    }
-    delete[] mirror; //
-    return 0;
-}*/
